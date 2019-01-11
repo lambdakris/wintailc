@@ -11,16 +11,19 @@ namespace WinTailC
         {
             WinTailSystem = ActorSystem.Create("WinTailSystem");
 
-            var consoleWriterActor = WinTailSystem.ActorOf(
+            var consoleWriterRef = WinTailSystem.ActorOf(
                 Props.Create(() => new ConsoleWriterActor())
             );
-            var consoleReaderActor = WinTailSystem.ActorOf(
-                Props.Create(() => new ConsoleReaderActor(consoleWriterActor))
+            var inputValidatorRef = WinTailSystem.ActorOf(
+                Props.Create(() => new InputValidatorActor(consoleWriterRef))
+            );
+            var consoleReaderRef = WinTailSystem.ActorOf(
+                Props.Create(() => new ConsoleReaderActor(inputValidatorRef))
             );
 
-            consoleReaderActor.Tell("read");
-
             Console.WriteLine("Enter some input");
+
+            consoleReaderRef.Tell(new ContinueProcessing());
 
             WinTailSystem.WhenTerminated.Wait();
 

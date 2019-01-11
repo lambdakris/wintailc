@@ -5,11 +5,11 @@ namespace WinTailC
 {
     class ConsoleReaderActor : UntypedActor
     {
-        IActorRef _consoleWriterActor;
+        IActorRef _inputValidatorRef;
 
-        public ConsoleReaderActor(IActorRef consoleWriterActor)
+        public ConsoleReaderActor(IActorRef inputValidatorRef)
         {
-            _consoleWriterActor = consoleWriterActor;
+            _inputValidatorRef = inputValidatorRef;
         }
 
         protected override void OnReceive(object message)
@@ -23,8 +23,7 @@ namespace WinTailC
                     Context.System.Terminate();
                     return;
                 default:
-                    _consoleWriterActor.Tell(input);
-                    Self.Tell("read");
+                    _inputValidatorRef.Tell(input);
                     return;
             }
 
